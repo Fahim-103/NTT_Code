@@ -1,0 +1,65 @@
+//taking two 16 bit buffers (xbuff, zbuff) and multiplying
+
+//#include <adf.h>
+#include "nttsub11.h"
+#include "include.h"
+#include "twiddle.h"
+
+
+
+using namespace adf;
+
+void test_multiply (input_window_int32  * restrict inputx,
+			        output_window_int32 * restrict outputy){
+
+
+
+    int32 *xbuff =  (int32 *)inputx->ptr;    //read access
+	int32 *ybuff =  (int32 *)outputy->ptr;    //write
+
+
+/*	int32 * restrict tw01 = (int32 *) stage0_tw1;
+	int32 * restrict tw02 = (int32 *) stage0_tw2;
+	int32 * restrict tw03 = (int32 *) stage0_tw3;*/
+
+	int32 * restrict tw11 = (int32 * restrict) stage1_tw;
+
+
+	int32 * restrict ntt_tmp1 = ntt_1a;  //pointer for storage array
+	//int32 * restrict ntt_tmp =  ntt_1;
+
+	int32 * restrict ntt_tmp2 =  ntt_2a;
+
+
+	stage1_0_ntt(xbuff, tw11, ntt_tmp1);
+	//stage1_0_ntt(ntt_tmp1, tw11, ntt_tmp2);
+
+/*	for (int i = 0; i < 16; i++){
+
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+
+
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff += 16;
+		*ybuff = *ntt_tmp2++; ybuff -= 239;
+
+
+
+	}*/
+
+}
+

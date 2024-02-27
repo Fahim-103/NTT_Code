@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;test_only/data/out00a.txt&apos; to &apos;out_stage_00a.txt&apos;" description="Rename resource &apos;out00a.txt&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="data/out00a.txt" name="out_stage_00a.txt" stamp="1708295223246" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;test_only/src/ntt_last_sub.c&apos; to &apos;ntt_last_sub.h&apos;" description="Rename resource &apos;ntt_last_sub.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/ntt_last_sub.c" name="ntt_last_sub.h" stamp="1708473428027" updateReferences="true"/>
+</session>

@@ -1,0 +1,42 @@
+//taking two 16 bit buffers (xbuff, zbuff) and multiplying
+
+//#include <adf.h>
+#include "nttsub11.h"
+#include "include.h"
+#include "twiddle.h"
+
+
+
+using namespace adf;
+
+void test_multiply (input_window_int32  * restrict inputx,
+			        output_window_int32 * restrict outputy){
+
+
+
+	cint32_t chess_storage(%chess_alignof(v4cint32)) tw0[4] ={{ 32767,     0},{ 23170,-23170},{     0,-32768},{-23170,-23170}};
+	cint32_t chess_storage(%chess_alignof(v4cint32)) tw1[4] ={{ 32767,     0},{ 30274,-12540},{ 23170,-23170},{ 12540,-30274}};
+
+
+	aie::vector<int32,4>  w, wcn , t, x, y, z ;
+
+	w=aie::broadcast<int32,4>(4294967295);
+	wcn=aie::broadcast<int32,4>(9);
+	t=aie::broadcast<int32,4>(1);
+
+
+	x = srs(mul(w,t), 0);
+	set_sat();
+	y = srs(mul(w,t),32);
+	z = x -y;
+
+
+	aie::print(x, true, "x ");
+	aie::print(y, true, "y ");
+	aie::print(z, true, "z ");
+
+
+
+
+}
+

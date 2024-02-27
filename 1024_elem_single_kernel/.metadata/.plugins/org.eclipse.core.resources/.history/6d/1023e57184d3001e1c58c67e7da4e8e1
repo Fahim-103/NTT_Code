@@ -1,0 +1,51 @@
+//taking two 16 bit buffers (xbuff, zbuff) and multiplying
+
+//#include <adf.h>
+#include "nttsub6.h"
+#include "include.h"
+#include "twiddle.h"
+
+
+using namespace adf;
+
+void test_multiply (input_window_int32  * restrict inputx,
+			        output_window_int32 * restrict outputy){
+
+
+
+    int32 *xbuff =  (int32 *)inputx->ptr;    //read access
+	int32 *ybuff =  (int32 *)outputy->ptr;    //write
+
+
+
+	int32 * restrict tw0 = (int32 * restrict) stage0_tw;
+	int32 * restrict tw1 = (int32 * restrict) stage1_tw;
+	int32 * restrict tw2 = (int32 * restrict) stage2_tw;
+
+
+	int32 * restrict ntt_tmp1 = ntt_1a;  //pointer for storage arra
+
+	int32 * restrict ntt_tmp2 =  ntt_2a;
+
+
+	stage0_ntt(xbuff, tw0, ntt_tmp1);
+
+	for (int i = 0; i < 4; i++){
+
+		stage1_ntt(ntt_tmp1, tw1, ntt_tmp2, i);
+
+	}
+
+
+	for (int i = 0; i < 16; i++){
+
+		stage2_ntt(ntt_tmp2, tw2, ntt_tmp1, i);
+
+	}
+
+
+	stage3_ntt(ntt_tmp1, ybuff);
+
+
+}
+

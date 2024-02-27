@@ -1,0 +1,167 @@
+#ifndef __NTTSUB_H__
+#define __NTTSUB_H__
+
+
+#include <adf.h>
+//#include "twiddle.h"
+
+#include "aie_api/aie.hpp"
+#include "aie_api/utils.hpp"
+#include "aie_api/aie_adf.hpp"
+#include "aie_api/operators.hpp"
+
+
+//#define rnd_floor 0
+
+inline __attribute__((always_inline)) v4int32 twdl_mod_mul_4 ( v4int32 m, v4int32 t){   // lane by lane twidl multiplication
+
+	aie::mask<4> msk_lt;
+	aie::vector<int32,4> c1, mout, mlt, mlt_con, mlt_mod, mlt_mod_c1, r, p;
+
+	r=aie::broadcast<int32,4>(65535);
+	p=aie::broadcast<int32,4>(65537);
+	c1=aie::broadcast<int32,4>(1);
+
+	v4acc80 mltacc;
+	mlt = srs(mltacc,0);
+
+
+	//modular_ntt_4 //modulus sub generation for mod = m - q [ ( m * r ) >> 32 ]
+	mlt_con = srs(mul(srs(mul(mlt,r),32),p),0) ;
+	mlt_mod   = srs((mltacc - mlt_con),0);
+
+	//lane selection
+	/*mlt_mod_c1 = mlt_mod + c1;
+	msk_lt=aie::lt(mlt,(int32)0);  //compare each element, true ifv1[i]<v2[i]
+	mout=aie::select(mlt_mod,(mlt_mod_c1),msk_lt);*/
+
+	return mlt_mod;
+}
+
+
+inline __attribute__((always_inline)) v4int32 twdl_mod_sub_4 ( v4int32 m, v4int32 pn){   // checks if the radx-4 output is negative and performs mod
+
+	aie::mask<4> msk_lt;
+	aie::vector<int32,4> m_mod, m_p, msel, m_con, r, p, m_in;
+
+	r=aie::broadcast<int32,4>(65535);
+	p=aie::broadcast<int32,4>(65537);
+
+	// m positive or negative, i.e. m or m+p // lane selection
+	m_in = m;
+	m_p = m_in+ pn;
+	msk_lt=aie::lt(m_in,(int32)0);
+	msel=aie::select(m_in,m_p,msk_lt);
+
+
+	//modular_ntt_4 //mod = m - q [ ( m * r ) >> 32 ]
+	m_con = srs(mul(srs(mul(msel,r),32),p),0) ; /////////can be problem
+	m_mod   = msel - m_con;
+
+
+	return m_mod;
+}
+
+
+
+inline __attribute__((always_inline)) void stage0_ntt ( int32 * restrict x,  int32 * restrict y,
+														int32 * restrict tw1, int32 * restrict tw2, int32 * restrict tw3){
+
+
+	v8int32 * xx = (v8int32 *) x; //16 byte 4 elem update
+	v4int32 * yy = (v4int32 *) y;
+
+	v4int32 * t1 = (v4int32 *) tw1;
+	v4int32 * t2 = (v4int32 *) tw2;
+	v4int32 * t3 = (v4int32 *) tw3;
+
+	v32int32 x1buff;
+
+	// 4-point NTT twiddle
+	int32 const chess_storage(%chess_alignof(v4int32)) tw[8] =   {1, 256, -1, -256,
+											                      0,  0,   0,  0}; //for zbuff twiddle for 4-point NTT (w_4)^1 = (w_16)^4 = 16
+	v8int32 zbuff = *((v8int32 *)tw); //zbuff
+
+	//modular pre-requirements
+	aie::vector<int32,4> p1, p2;
+
+	p1 = aie::broadcast<int32,4>(131074); // 2q
+	p2 = aie::broadcast<int32,4>(16843009); // q(w+1) ; w is from zbuff
+
+
+	v4int32 m00, m10, m20, m30, m01, m11, m21, m31;
+	v4int32 mr00, mr01, mr10, mr11, mr20, mr21, mr30, mr31;
+
+	aie::vector<int32,8> vtest, v, vt, vrt, m1_s, m2_s, m3_s, mr1f_s, mr2f_s, mr3f_s;
+
+	aie::mask<8> msk_lt;
+	aie::vector<int32,8> c1=aie::broadcast<int32,8>(1);
+
+	for (int i = 0; i < 32; i++){
+
+		x1buff = upd_w(x1buff, 0, *xx); xx += 32;
+		x1buff = upd_w(x1buff, 1, *xx); xx += 32;
+		x1buff = upd_w(x1buff, 3, *xx); xx += 32;
+		x1buff = upd_w(x1buff, 2, *xx); xx -= 95;
+		//aie::vector<int32,32> x_vec = x1buff;
+		//aie::print(x_vec, true, "x_vec ");
+
+		// block of first second third fourt points, with tw multiplication
+
+		m00 = srs(lmul4_sym     (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 0) , 0);
+		m01 = srs(lmul4_sym     (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 0) , 0);
+
+		m10 = srs(lmul4_antisym (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 1) , 0) ; //first points of 4-blocks 4-point
+		m11 = srs(lmul4_antisym (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 1) , 0) ;
+
+		m20 = srs(lmul4_sym     (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 2)  ,0) ;
+		m21 = srs(lmul4_sym     (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 2)  ,0) ;
+
+		m30 = srs(lmul4_antisym (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 3)  ,0) ;
+		m31 = srs(lmul4_antisym (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 3)  ,0) ;
+
+		//===========================================================================================================
+		mr00 = twdl_mod_sub_4(m00, p1);
+		mr01 = twdl_mod_sub_4(m01, p1);
+		*yy++ = mr00;  //0
+		*yy = mr01; yy +=63; //1 to 64
+
+		mr10 = twdl_mod_sub_4(m10, p2); // +p if negative and then modular
+		mr10 = twdl_mod_mul_4(mr10, *t1++); // tw multiplication, +1 if multp is negative
+		mr11 = twdl_mod_sub_4(m11, p2);
+		mr11 = twdl_mod_mul_4(mr11, *t1++);
+		*yy++ = mr10; // 64
+		*yy = mr11; yy +=63; //65 to 128
+
+		mr20 = twdl_mod_sub_4(m20, p1);
+		mr20 = twdl_mod_mul_4(mr20, *t2++);
+		mr21 = twdl_mod_sub_4(m21, p1);
+		mr21 = twdl_mod_mul_4(mr21, *t2++);
+		*yy++ = mr20; // 128
+		*yy = mr21; yy +=63; // 129 to 192
+
+
+		mr30 = twdl_mod_sub_4(m30, p2);
+		mr30 = twdl_mod_mul_4(mr30, *t3++);
+		mr31 = twdl_mod_sub_4(m31, p2);
+		mr31 = twdl_mod_mul_4(mr31, *t3++);
+		*yy++ = mr30; // 192
+		*yy = mr31; yy -=191; // 193 to 2
+
+
+	}
+
+}
+
+/*
+
+	aie::vector<int32,16> v;
+	v = *t1;
+	aie::print(v, true, "t ");
+	*yy = *xx;
+
+*/
+
+
+
+#endif

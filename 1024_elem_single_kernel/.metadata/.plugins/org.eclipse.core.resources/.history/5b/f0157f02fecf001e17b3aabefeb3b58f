@@ -1,0 +1,71 @@
+//taking two 16 bit buffers (xbuff, zbuff) and multiplying
+
+//#include <adf.h>
+#include "nttsub11.h"
+#include "include.h"
+#include "twiddle.h"
+
+
+
+using namespace adf;
+
+void test_multiply (input_window_int32  * restrict inputx,
+			        output_window_int32 * restrict outputy){
+
+
+
+	cint32_t chess_storage(%chess_alignof(v4cint32)) tw0[4] ={{ 32767,     0},{ 23170,-23170},{     0,-32768},{-23170,-23170}};
+	cint32_t chess_storage(%chess_alignof(v4cint32)) tw1[4] ={{ 32767,     0},{ 30274,-12540},{ 23170,-23170},{ 12540,-30274}};
+
+
+	aie::vector<int16,8>  w, wcn , t, xx, yy;
+	aie::vector<int32,8> x, y ;
+	aie::vector<int32,4>z, d, e,f;
+	aie::accum<acc48,8> b;
+	aie::accum<acc80,4> c,d;
+
+	w=aie::broadcast<int16,8>(0xffff);  // 2147483648 4294967285
+	w[1] = 0;
+	w[3] = 0;
+	w[5] = 0;
+	w[7] = 0;
+
+
+	wcn=aie::broadcast<int16,8>(9);
+	t=aie::broadcast<int16,8>(1);
+
+
+	z = as_v4int32(w);
+	e = aie::broadcast<int32,4>(0xFFFF);
+	f = aie::broadcast<int32,4>(1);
+
+	c = mul(z,e);
+	d = mul(z,f);
+
+
+
+	//set_sat ();
+	int a = get_MD 	(0);
+
+	b =  mul(w,t);
+	//b= aie::bit_and((acc32)0x7fff,b);
+	x = lsrs(mul(w,t), 0);
+	//x = aie::downshift(x,3);
+	//x= aie::bit_and((int32)0x7fff,x);
+	y = lsrs(mul(w,t),32);
+	//z = x -y;
+
+
+	//aie::print(b, true, "acc ");
+	//aie::print(x, true, "x ");
+	//aie::print(w, true, "w ");
+	aie::print(z, true, "z ");
+	aie::print(c, true, "c ");
+	aie::print(d, true, "d ");
+
+	printf("%d ", a);
+
+
+
+}
+

@@ -1,0 +1,50 @@
+inline __attribute__((always_inline)) v8int32 twdl_mod_mul_8 ( v8int32 m, v8int32 t){   // lane by lane twidl multiplication
+
+	aie::mask<4> msk_lt;
+	aie::vector<int32,8> c1, mout, mlt, mlt_con, mlt_mod, mlt_mod_c1, r, p;
+
+	r=aie::broadcast<int32,8>(349496);
+	p=aie::broadcast<int32,8>(12289);
+	c1=aie::broadcast<int32,8>(1);
+
+	v4acc80 mltacc;
+	mltacc = mul(m,t);
+	mlt = srs(mltacc,0);
+
+
+	//modular_ntt_4 //modulus sub generation for mod = m - q [ ( m * r ) >> 32 ]
+	mlt_con = srs(mul(srs(mul(mlt,r),32),p),0) ;
+	mlt_mod   = srs((mltacc - mlt_con),0);
+
+	//lane selection
+	/*mlt_mod_c1 = mlt_mod + c1;
+	msk_lt=aie::lt(mlt,(int32)0);  //compare each element, true ifv1[i]<v2[i]
+	mout=aie::select(mlt_mod,(mlt_mod_c1),msk_lt);*/
+
+	return mlt_mod;
+}
+
+
+inline __attribute__((always_inline)) v8int32 twdl_mod_sub_4 ( v8int32 m, v8int32 pn){   // checks if the radx-4 output is negative and performs mod
+
+	aie::mask<4> msk_lt;
+	aie::vector<int32,8> m_mod, m_p, msel, m_con, r, p, m_in;
+
+	r=aie::broadcast<int32,8>(349496);
+	p=aie::broadcast<int32,8>(12289);
+
+	// m positive or negative, i.e. m or m+p // lane selection
+	m_in = m;
+	m_p = m_in+ pn;
+	msk_lt=aie::lt(m_in,(int32)0);
+	msel=aie::select(m_in,m_p,msk_lt);
+
+
+	//modular_ntt_4 //mod = m - q [ ( m * r ) >> 32 ]
+	m_con = srs(mul(srs(mul(msel,r),32),p),0) ; /////////can be problem
+	m_mod   = msel - m_con;
+
+
+	return m_mod;
+}
+

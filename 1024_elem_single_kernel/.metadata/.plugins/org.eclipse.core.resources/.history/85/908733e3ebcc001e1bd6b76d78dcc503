@@ -1,0 +1,10 @@
+
+#ifndef __INCLUDES_H__
+#define __INCLUDES_H__
+
+int32 chess_storage(%chess_alignof(int32)) ntt_1[1024];
+int32 chess_storage(%chess_alignof(int32)) ntt_2[1024];
+
+
+
+#endif

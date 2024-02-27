@@ -1,0 +1,74 @@
+//taking two 16 bit buffers (xbuff, zbuff) and multiplying
+
+//#include <adf.h>
+#include "nttsub6.h"
+#include "include.h"
+#include "twiddle.h"
+
+/*aie::vector<int32,4> r, p;
+
+r=aie::broadcast<int32,4>(349496);
+p=aie::broadcast<int32,4>(12289);*/
+
+using namespace adf;
+
+void test_multiply (input_window_int32  * restrict inputx,
+			        output_window_int32 * restrict outputy){
+
+
+
+    int32 *xbuff =  (int32 *)inputx->ptr;    //read access
+	int32 *ybuff =  (int32 *)outputy->ptr;    //write
+
+
+
+	int32 * restrict tw01 = (int32 * restrict) stage0_tw1;
+	int32 * restrict tw11 = (int32 * restrict) stage1_tw;
+
+
+	int32 * restrict ntt_tmp1 = ntt_1a;  //pointer for storage arra
+
+	int32 * restrict ntt_tmp2 =  ntt_2a;
+
+
+	stage0_ntt(xbuff, tw01, ntt_tmp1);
+
+	for (int i = 0; i < 4; i++){
+
+		stage1_ntt(ntt_tmp1, tw01, ntt_tmp2, i);
+
+	}
+
+
+	for (int i = 0; i < 16; i++){
+
+		stage2_ntt(ntt_tmp2, tw01, ntt_tmp1, i);
+
+	}
+
+
+
+
+
+
+
+/*	for (int i = 0; i < 16; i++){
+
+
+		for (int j = 0; j < 16; j++){
+
+			window_write(outputy,*ntt_tmp2++);
+			window_incr(outputy,16);
+
+		}
+
+		window_incr(outputy, 1);
+
+	}*/
+
+
+
+
+
+}
+

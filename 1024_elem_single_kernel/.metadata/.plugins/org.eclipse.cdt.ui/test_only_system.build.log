@@ -1,0 +1,20 @@
+12:53:42 **** Build of configuration Emulation-SW for project test_only_system ****
+make all 
+Running Package Step for the System Project.
+/home/secure/vitis/Vitis/2023.1/bin/v++ --package --config package.cfg ../../test_only/Emulation-SW/libadf.a ../../test_only_system_hw_link/Emulation-SW/binary_container_1.xsa -o binary_container_1.xclbin
+/home/secure/vitis/Vitis/2023.1/bin/v++ --package --config package.cfg   ../../test_only/Emulation-SW/libadf.a ../../test_only_system_hw_link/Emulation-SW/binary_container_1.xsa -o binary_container_1.xclbin
+Option Map File Used: '/home/secure/vitis/Vitis/2023.1/data/vitis/vpp/optMap.xml'
+
+****** v++ v2023.1 (64-bit)
+  **** SW Build 3860322 on 2023-05-04-06:32:48
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ package can be found at:
+	Reports: /home/secure/tools/ParallelNTT/for_test_only/test_only_system/Emulation-SW/package.build/reports/package
+	Log files: /home/secure/tools/ParallelNTT/for_test_only/test_only_system/Emulation-SW/package.build/logs/package
+make: *** [makefile:39: package] Terminated
+Command canceled
+
+12:53:48 Build Cancelled (took 5s.524ms)
+

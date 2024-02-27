@@ -1,0 +1,97 @@
+
+#include "kernels.h"
+
+extern int32 ntt_1a[256];/////////////////////
+extern int32 ntt_1b[256];
+extern int32 ntt_1c[256];
+extern int32 ntt_1d[256];
+
+extern int32 ntt_2a[256];
+extern int32 ntt_2b[256];
+extern int32 ntt_2c[256];
+extern int32 ntt_2d[256];
+
+extern int32 stage0_tw1[256];
+extern int32 stage0_tw2[256];
+extern int32 stage0_tw3[256];
+
+extern int32 stage1_tw[256];
+
+
+
+
+using namespace adf;
+
+
+class test_graph : public adf::graph{
+
+public:
+
+    parameter buf1a;  ////////////////////////////////////
+    parameter buf1b;
+    parameter buf1c;
+    parameter buf1d;
+
+    parameter buf2a;
+    parameter buf2b;
+    parameter buf2c;
+    parameter buf2d;
+
+    parameter buf3;
+    parameter buf4;
+    parameter buf5;
+
+    parameter buf6;
+
+
+	adf::port<input>  gr_in;
+    adf::port<output> gr_out;
+    adf::kernel kl;
+
+    test_graph(){
+
+    	kl = adf::kernel::create(test_multiply);
+    	adf::runtime<ratio>(kl) = 0.8 ;
+    	source(kl) = "test_multiply.cc" ;
+
+
+        buf1a = parameter::array(ntt_1a);//////////////////////
+        buf1b = parameter::array(ntt_1b);
+        buf1c = parameter::array(ntt_1c);
+        buf1d = parameter::array(ntt_1d);
+
+        buf2a = parameter::array(ntt_2a);
+        buf2b = parameter::array(ntt_2b);
+        buf2c = parameter::array(ntt_2c);
+        buf2d = parameter::array(ntt_2d);
+
+        buf3 = parameter::array(stage0_tw1);
+        buf4 = parameter::array(stage0_tw2);
+        buf5 = parameter::array(stage0_tw3);
+
+        buf6 = parameter::array(stage1_tw);
+
+
+        connect<>(buf1a, kl);///////////////////////////
+        connect<>(buf1b, kl);
+        connect<>(buf1c, kl);
+        connect<>(buf1d, kl);
+
+        connect<>(buf2a, kl);
+        connect<>(buf2b, kl);
+        connect<>(buf2c, kl);
+        connect<>(buf2d, kl);
+
+        connect<>(buf3, kl);
+        connect<>(buf4, kl);
+        connect<>(buf5, kl);
+
+        connect<>(buf6, kl);
+
+
+    	adf::connect<window<1024*4>>(gr_in, kl.in[0]);
+    	adf::connect<window<1024*4>>(kl.out[0], gr_out);
+
+    };
+
+};

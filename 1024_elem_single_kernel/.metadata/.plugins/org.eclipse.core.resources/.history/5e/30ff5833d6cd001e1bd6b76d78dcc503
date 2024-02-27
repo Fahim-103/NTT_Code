@@ -1,0 +1,58 @@
+#ifndef __NTTSUB_H__
+#define __NTTSUB_H__
+
+
+#include <adf.h>
+//#include "twiddle.h"
+
+#include "aie_api/aie.hpp"
+#include "aie_api/utils.hpp"
+#include "aie_api/aie_adf.hpp"
+#include "aie_api/operators.hpp"
+
+
+//#define rnd_floor 0
+
+
+inline __attribute__((always_inline)) v8int32 modular_ntt ( v8int32 v){
+
+	//modulus sub generation for mod = t - q [ (65535 * t) >> 32 ]
+
+	int32 rr[8] = {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535};  //w'/q
+	v8int32  r = *((v8int32*)rr);
+
+	int32 po[8] = {65537, 65537, 65537, 65537, 65537, 65537, 65537, 65537};  // q
+	v8int32 p0 = *((v8int32*)po);  // q
+
+	v8int32 vcon, vr;
+	vcon = srs(mul(srs(mul(v,r),32),p0),0) ;
+
+	vr   = v - vcon;
+
+	return vr;
+
+}
+
+inline __attribute__((always_inline)) void stage1_0_ntt ( int32 * restrict x,  int32 * restrict y,
+														int32 * restrict tw1){
+
+
+
+
+	v16int32 * xx = (v16int32 *) x; //16 byte 4 elem update
+	v16int32 * yy = (v16int32 *) y;
+
+	v8int32 * t1 = (v8int32 *) tw1;
+
+
+	*yy = *xx;
+
+
+
+}
+
+
+
+
+
+#endif

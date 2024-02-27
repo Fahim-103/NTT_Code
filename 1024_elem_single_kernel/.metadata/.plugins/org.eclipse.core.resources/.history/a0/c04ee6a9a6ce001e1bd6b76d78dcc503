@@ -1,0 +1,52 @@
+		m00 =           srs(lmul4_sym     (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 0) , 0);
+		m01 =           srs(lmul4_sym     (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 0) , 0);
+
+
+		m10 = srs(lmul4_antisym (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 1) , 0) ; //first points of 4-blocks 4-point
+		m11 = srs(lmul4_antisym (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 1) , 0) ;
+
+
+		m20 = srs(lmul4_sym     (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 2)  ,0) ;
+		m21 = srs(lmul4_sym     (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 2)  ,0) ;
+
+
+		m30 = srs(lmul4_antisym (x1buff, 0, 0x3210, 8, 24, zbuff, 0, 0x0000, 3)  ,0) ;
+		m31 = srs(lmul4_antisym (x1buff, 4, 0x3210, 8, 28, zbuff, 0, 0x0000, 3)  ,0) ;
+
+
+//===========================================================================================================
+
+		v8int32 m0, m1, m2, m3, m1_test, m2_test, m3_test;
+
+		m0 = upd_v(m0, 0, m00);
+		m0 = upd_v(m0, 1, m01);
+
+		m1 = upd_v(m1, 0, m10);
+		m1 = upd_v(m1, 1, m11);
+
+		m2 = upd_v(m2, 0, m20);
+		m2 = upd_v(m2, 1, m21);
+
+		m3 = upd_v(m3, 0, m30);
+		m3 = upd_v(m3, 1, m31);
+
+
+
+		m1_test = m1 + p2;
+		m2_test = m2 + p1;
+		m3_test = m3 + p2;
+
+
+		aie::mask<8> msk_lt=aie::lt(m1,(int32)0);  //compare each element, true ifv1[i]<v2[i]
+		msk_lt.set(0);//set bit 0 to be true
+		msk_lt.clear(1); //set bit 1 to be false
+		aie::vector<int32,8> m0_s=aie::select(m1,m1_test,msk_lt);
+
+
+
+
+
+
+
+
+

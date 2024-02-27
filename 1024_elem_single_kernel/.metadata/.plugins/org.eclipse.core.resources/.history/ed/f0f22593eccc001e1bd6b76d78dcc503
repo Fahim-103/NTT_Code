@@ -1,0 +1,69 @@
+
+#include "kernels.h"
+
+extern int32 ntt_1[1024];/////////////////////
+extern int32 ntt_2[1024];
+
+extern int32 stage0_tw1[256];
+extern int32 stage0_tw2[256];
+extern int32 stage0_tw3[256];
+
+extern int32 stage1_tw[256];
+
+
+
+
+using namespace adf;
+
+
+class test_graph : public adf::graph{
+
+public:
+
+    parameter buf1;  ////////////////////////////////////
+    parameter buf2;
+
+    parameter buf3;
+    parameter buf4;
+    parameter buf5;
+
+    parameter buf6;
+
+
+	adf::port<input>  gr_in;
+    adf::port<output> gr_out;
+    adf::kernel kl;
+
+    test_graph(){
+
+    	kl = adf::kernel::create(test_multiply);
+    	adf::runtime<ratio>(kl) = 0.8 ;
+    	source(kl) = "test_multiply.cc" ;
+
+
+        buf1 = parameter::array(ntt_1);//////////////////////
+        buf2 = parameter::array(ntt_2);
+
+        buf3 = parameter::array(stage0_tw1);
+        buf4 = parameter::array(stage0_tw2);
+        buf5 = parameter::array(stage0_tw3);
+
+        buf6 = parameter::array(stage1_tw);
+
+
+        connect<>(buf1, kl);///////////////////////////
+        connect<>(buf2, kl);
+
+        connect<>(buf3, kl);
+        connect<>(buf4, kl);
+        connect<>(buf5, kl);
+
+        connect<>(buf6, kl);
+
+
+    	adf::connect<window<1024*4>>(gr_in, kl.in[0]);
+    	adf::connect<window<1024*4>>(kl.out[0], gr_out);
+
+    };
+
+};
