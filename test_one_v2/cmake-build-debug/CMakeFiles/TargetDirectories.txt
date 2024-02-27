@@ -1,0 +1,3 @@
+/home/secure/CLionProjects/test_one_v2/cmake-build-debug/CMakeFiles/test_one_v2.dir
+/home/secure/CLionProjects/test_one_v2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/secure/CLionProjects/test_one_v2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
