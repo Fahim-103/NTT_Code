@@ -1,0 +1,1 @@
+AIE_PKG_DIR=/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/./Work

@@ -1,0 +1,129 @@
+<ENTRY>
+{
+ "thisFile": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/aiesimulator_output/default.aierun_summary",
+ "connectId": "",
+ "serverToken": "",
+ "timestamp": "0"
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028425",
+ "report": {
+  "path": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/Work",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "AIE_COMPILER_WORKDIR",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_CmdStep",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028426",
+ "buildStep": {
+  "cmdId": "0a5cfe0d-e372-4a7d-923a-93b80d225a16",
+  "name": "aiesim",
+  "logFile": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/AIESimulator.log",
+  "commandLine": "aiesimulator --pkg-dir ./Work --aiearch-version aie --i=.. ",
+  "args": [
+   "aiesimulator",
+   "--pkg-dir ./Work",
+   "--aiearch-version aie",
+   "--i=.."
+  ],
+  "iniFiles": [],
+  "cwd": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028426",
+ "status": {
+  "cmdId": "0a5cfe0d-e372-4a7d-923a-93b80d225a16",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_FlowMetaData",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028426",
+ "buildSummary": {
+  "hardwarePlatform": "xcvc1902-vsva2197-2MP-e-S",
+  "hardwareDsa": "VC1902",
+  "platformDirectory": "",
+  "runtime": "",
+  "systemConfig": "",
+  "flow": "BF_COMPILE",
+  "target": "TT_AIESIM",
+  "kernels": [
+   {
+    "base": {
+     "type": "KERNEL",
+     "name": "",
+     "file": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/Work/temp/test.json",
+     "reports": [],
+     "uuid": ""
+    },
+    "sources": [
+     "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/src/test.cpp"
+    ],
+    "psSources": [],
+    "cuNames": [],
+    "type": "AIE",
+    "frequency": 1250,
+    "freqUnits": ""
+   }
+  ],
+  "toolVersion": "2023.1"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028427",
+ "report": {
+  "path": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/AIESim_FIFO_Guidance.json",
+  "name": "",
+  "fileType": "JSON",
+  "reportType": "AIE_SIM_FIFO_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Tue Feb 27 10:50:28 2024",
+ "timestampMillis": "1709049028427",
+ "report": {
+  "path": "/home/secure/tools/ParallelNTT/for_test_only_6/test_only/Emulation-AIE/AIESim_Guidance.json",
+  "name": "",
+  "fileType": "JSON",
+  "reportType": "AIE_SIM_MEMORY_ACCESS_VIOLATION_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Tue Feb 27 10:51:33 2024",
+ "timestampMillis": "1709049093443",
+ "status": {
+  "cmdId": "0a5cfe0d-e372-4a7d-923a-93b80d225a16",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
